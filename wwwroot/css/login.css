@@ -1,0 +1,147 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* CONTENEDOR GENERAL */
+.login-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* TARJETA */
+.login-card {
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    overflow: hidden;              /* CLAVE */
+    max-width: 760px;
+    width: 90%;
+    min-height: 420px;             /* CLAVE */
+}
+
+/* IMAGEN */
+.login-image {
+    flex: 1.4;                       /* CLAVE */
+}
+
+.login-image img {
+    width: 100%;
+    height: 100%;
+     object-fit: cover;
+    
+   
+}
+
+/* DIVISOR */
+.login-divider {
+    width: 1px;
+    background-color: #dce3ec;
+}
+
+/* FORMULARIO */
+.login-form {
+    flex: 0.9;                       /* CLAVE */
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #f9fbfe;
+}
+
+.login-form h1 {
+    text-align: center;
+    margin-bottom: 0.3rem;
+    color: #2c3e50;
+}
+
+.login-form h2 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+/* FORM */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    font-size: 0.85rem;
+    color: #34495e;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.65rem;
+    border-radius: 6px;
+    border: 1px solid #bcd0e0;
+    font-size: 0.95rem;
+    background-color: #fff;
+}
+
+/* ALERTA */
+.alert {
+    background-color: #ffdddd;
+    color: #c0392b;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* BOTÓN */
+button {
+    background-color: #3498db;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* ========================= */
+/* RESPONSIVE (MÓVIL/TABLET) */
+/* ========================= */
+
+@media (max-width: 768px) {
+
+    .login-card {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .login-image {
+        height: 180px;
+    }
+
+    .login-divider {
+        display: none;
+    }
+
+    .login-form {
+        padding: 1.5rem;
+    }
+}

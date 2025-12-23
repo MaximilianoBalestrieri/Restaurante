@@ -1,0 +1,9 @@
+@{
+    ViewBag.Title = "Caja";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Caja</h1>
+
+<p>Bienvenido @Context.Session.GetString("Usuario")</p>
+<p>Rol: @Context.Session.GetString("Rol")</p>

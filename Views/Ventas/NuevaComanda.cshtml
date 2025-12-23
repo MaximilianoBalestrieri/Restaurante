@@ -1,0 +1,167 @@
+@using RestauranteApp.Models
+@model ComandaViewModel
+
+@{
+    ViewData["Title"] = "Nueva Comanda";
+}
+
+<div class="container-fluid mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-shop"></i> Mesa #@Model.NumeroMesa</h2>
+        <a href="@Url.Action("Index", "Mesas")" class="btn btn-outline-secondary btn-sm">Volver</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <ul class="nav nav-pills mb-3 shadow-sm p-2 bg-white rounded" id="pills-tab" role="tablist">
+                @for (int i = 0; i < Model.Categorias.Count; i++)
+                {
+                    var cat = Model.Categorias[i];
+                    <li class="nav-item">
+                        <button class="nav-link @(i == 0 ? "active" : "") me-2" 
+                                id="tab-@cat.IdCategoria" 
+                                data-bs-toggle="pill" 
+                                data-bs-target="#panel-@cat.IdCategoria" 
+                                type="button" role="tab">
+                            @cat.Nombre
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            <div class="tab-content" id="pills-tabContent">
+                @for (int i = 0; i < Model.Categorias.Count; i++)
+                {
+                    var cat = Model.Categorias[i];
+                    <div class="tab-pane fade @(i == 0 ? "show active" : "")" 
+                         id="panel-@cat.IdCategoria" role="tabpanel">
+                        
+                        <div class="row row-cols-1 row-cols-md-3 g-3">
+                            @foreach (var prod in Model.Productos.Where(p => p.IdCategoria == cat.IdCategoria))
+                            {
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm border-0">
+                                        <img src="@prod.Imagen" 
+                                             class="card-img-top" 
+                                             style="height: 140px; object-fit: cover;"
+                                             onerror="this.src='/imagenes/productos/default.png';">
+                                        
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title fw-bold">@prod.Nombre</h6>
+                                            <p class="card-text text-success fw-bold">$@prod.Precio.ToString("N2")</p>
+                                            <button class="btn btn-primary btn-sm w-100" 
+                                                    onclick="agregarAlPedido(@prod.IdProducto, '@prod.Nombre', @prod.Precio.ToString().Replace(",", "."))">
+                                                <i class="bi bi-plus"></i> Agregar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg border-primary sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Pedido Actual</h5>
+                </div>
+                <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item</th>
+                                <th class="text-center">Cant.</th>
+                                <th class="text-end">Subt.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detallePedido">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between h5">
+                        <span>Total:</span>
+                        <span class="text-primary fw-bold">$<span id="totalComanda">0.00</span></span>
+                    </div>
+                    <button class="btn btn-success w-100 btn-lg mt-2" onclick="enviarCocina()">
+                        ENVIAR A COCINA
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // INICIALIZAMOS EL PEDIDO CON LO QUE VIENE DE LA DB
+        let pedido = @Html.Raw(Json.Serialize(Model.DetalleActual.Select(d => new { 
+            id = d.IdProducto, 
+            nombre = d.NombreProducto, 
+            precio = d.PrecioUnitario, 
+            cantidad = d.Cantidad 
+        })));
+
+        // Ejecutamos renderizar apenas carga la página
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarPedido();
+        });
+
+        function agregarAlPedido(id, nombre, precio) {
+            const item = pedido.find(p => p.id === id);
+            if (item) {
+                item.cantidad++;
+            } else {
+                pedido.push({ id, nombre, precio, cantidad: 1 });
+            }
+            renderizarPedido();
+            
+            // OPCIONAL: Aquí llamaremos a una función para guardar en DB en tiempo real
+            // guardarEnBaseDeDatos(id, 1); 
+        }
+
+       function renderizarPedido() {
+    let html = "";
+    let total = 0;
+    pedido.forEach(item => {
+        let subtotal = item.precio * item.cantidad;
+        html += `
+            <tr>
+                <td>${item.nombre}</td>
+                <td class="text-center">
+                    <span class="badge bg-light text-dark border">${item.cantidad}</span>
+                </td>
+                <td class="text-end">$${subtotal.toFixed(2)}</td>
+                <td class="text-center">
+                    <button class="btn btn-outline-danger btn-sm" onclick="quitarDelPedido(${item.id})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+        total += subtotal;
+    });
+    document.getElementById("detallePedido").innerHTML = html;
+    document.getElementById("totalComanda").innerText = total.toFixed(2);
+}
+
+function quitarDelPedido(idProducto) {
+    if(!confirm("¿Quitar este producto del pedido?")) return;
+
+    fetch('@Url.Action("EliminarProductoAjax", "Ventas")', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `idMesa=@Model.IdMesa&idProducto=${idProducto}`
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.success) {
+            pedido = pedido.filter(p => p.id !== idProducto);
+            renderizarPedido();
+        }
+    });
+}
+    </script>
+}

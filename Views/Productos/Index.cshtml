@@ -1,0 +1,71 @@
+@model List<RestauranteApp.Models.Producto>
+
+@{
+    ViewData["Title"] = "Administración de Productos";
+}
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+            <h3 class="mb-0"><i class="bi bi-box-seam me-2"></i>Gestión de Productos</h3>
+            <a asp-action="Crear" class="btn btn-success shadow-sm">
+                <i class="bi bi-plus-circle"></i> Agregar Nuevo Producto
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th style="width: 10%;">Imagen</th>
+                            <th class="text-start" style="width: 40%;">Nombre del Producto</th>
+                            <th style="width: 15%;">Categoría</th>
+                            <th class="text-end" style="width: 15%; padding-right: 20px;">Precio</th>
+                            <th style="width: 20%;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    <img src="@item.Imagen" alt="Prod" 
+                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #eee;" 
+                                         onerror="this.src='/imagenes/productos/default.png';"/>
+                                </td>
+                                <td class="text-start">
+                                    <span class="fw-bold text-dark">@item.Nombre</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill bg-info text-dark px-3">
+                                        @(item.IdCategoria switch {
+                                            1 => "Comidas",
+                                            2 => "Bebidas",
+                                            3 => "Postres",
+                                            4 => "Cafetería",
+                                            _ => "Otros"
+                                        })
+                                    </span>
+                                </td>
+                                <td class="text-end fw-bold text-success" style="padding-right: 20px;">
+                                    $ @item.Precio.ToString("N2")
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Editar" asp-route-id="@item.IdProducto" 
+                                       class="btn btn-warning btn-sm me-1 text-white">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </a>
+                                    <a asp-action="Eliminar" asp-route-id="@item.IdProducto" 
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('¿Está seguro de eliminar este producto?')">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

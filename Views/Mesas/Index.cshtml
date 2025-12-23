@@ -1,0 +1,32 @@
+@{
+    ViewBag.Title = "Mesas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Mesas - MOZO</h1>
+
+
+@model List<RestauranteApp.Models.Mesa>
+
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:1rem;">
+@foreach (var mesa in Model)
+{
+    <a href="@Url.Action("NuevaComanda", "Ventas", new { idMesa = mesa.IdMesa })" style="text-decoration: none;">
+        <div style="
+            padding:1rem;
+            border-radius:8px;
+            text-align:center;
+            /* CAMBIAMOS LA LÓGICA DE COLORES AQUÍ */
+            background-color:@(mesa.Estado == "LIBRE" ? "#2ecc71" : "#e74c3c"); 
+            color:white;
+            font-weight:bold;
+            cursor:pointer;
+            margin-bottom: 5px;">
+            
+            Mesa @mesa.Numero <br />
+            <small>@mesa.Estado</small>
+        </div>
+    </a>
+}
+</div>

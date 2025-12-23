@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+@{
+    var rol = Context.Session.GetString("Rol");
+    var nombre = Context.Session.GetString("NombreCompleto");
+}
+
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - RestauranteApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="header-left">
+            <img src="~/imagenes/default.png" class="user-avatar" />
+
+            <div class="user-info">
+                <span class="user-name">
+                    ¡Bienvenido, @nombre!
+                </span><br />
+                <span class="user-role">
+                    Rol: @rol
+                </span>
+            </div>
+        </div>
+
+        <nav class="header-nav">
+
+            @* ===== CAJA / ADMIN ===== *@
+            @if (rol == "CAJA")
+            {
+                <a asp-controller="Home" asp-action="Index">Inicio</a>
+                <a asp-controller="Productos" asp-action="Index">Productos</a>
+                <a asp-controller="Ventas" asp-action="Index">Ventas</a>
+                <a asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+            }
+
+            @* ===== MOZO ===== *@
+            @if (rol == "MOZO")
+            {
+                <a asp-controller="Mesas" asp-action="Index">Mesas</a>
+                <a asp-controller="Comandas" asp-action="Index">Comandas</a>
+            }
+
+            @* ===== COCINA ===== *@
+            @if (rol == "COCINA")
+            {
+                <a asp-controller="Cocina" asp-action="Index">Pedidos</a>
+            }
+
+            <a asp-controller="Login" asp-action="Logout" class="logout">
+                Cerrar sesión
+            </a>
+        </nav>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="container-fluid mt-3">
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-top footer text-muted mt-4">
+        <div class="container text-center">
+            &copy; 2025 - RestauranteApp
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
