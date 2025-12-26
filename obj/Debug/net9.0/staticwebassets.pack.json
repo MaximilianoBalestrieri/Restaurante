@@ -49,6 +49,10 @@
       "PackagePath": "staticwebassets\\imagenes\\productos\\jarrito.jpg"
     },
     {
+      "Id": "C:\\Users\\CCMEW\\RestauranteApp\\wwwroot\\imagenes\\productos\\lomito.jpg",
+      "PackagePath": "staticwebassets\\imagenes\\productos\\lomito.jpg"
+    },
+    {
       "Id": "C:\\Users\\CCMEW\\RestauranteApp\\wwwroot\\imagenes\\productos\\pizza.jpg",
       "PackagePath": "staticwebassets\\imagenes\\productos\\pizza.jpg"
     },

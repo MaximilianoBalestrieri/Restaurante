@@ -100,3 +100,4 @@ C:\Users\CCMEW\RestauranteApp\obj\Debug\net9.0\RestauranteApp.csproj.AssemblyRef
 C:\Users\CCMEW\RestauranteApp\obj\Debug\net9.0\Restaura.4421DF08.Up2Date
 C:\Users\CCMEW\RestauranteApp\obj\Debug\net9.0\compressed\z6spo0zthg-1hhiu0wmnq.gz
 C:\Users\CCMEW\RestauranteApp\obj\Debug\net9.0\compressed\13keemuodo-13sme10w3e.gz
+C:\Users\CCMEW\RestauranteApp\obj\Debug\net9.0\RestauranteApp.sourcelink.json

@@ -1,0 +1,14 @@
+# Ignorar archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar carpetas de dependencias (si usas npm)
+node_modules/
+
+# Ignorar archivos de configuración personal o contraseñas
+.env
+config.local.json
+
+# Ignorar carpetas de compilación o temporales
+dist/
+tmp/

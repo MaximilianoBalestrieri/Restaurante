@@ -1,0 +1,105 @@
+@model List<dynamic>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cash-register text-success"></i> Control de Caja</h2>
+        <div>
+            <button class="btn btn-outline-primary btn-sm me-2" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise"></i> Actualizar
+            </button>
+            <span class="badge bg-primary">Mesas Activas: @Model.Count</span>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var c in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 position-relative btn-outline-light" 
+                     onclick="verDetalle(@c.IdMesa)" style="cursor: pointer; border-left: 5px solid #198754 !important;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h4 class="fw-bold mb-0">Mesa #@c.IdMesa</h4>
+                            <span class="badge bg-light text-dark border">@c.Fecha.ToString("HH:mm")</span>
+                        </div>
+                        <p class="text-muted small mb-1">Total acumulado:</p>
+                        <h3 class="text-success fw-bold">$@c.Total.ToString("N2")</h3>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 text-center pb-3">
+                        <small class="text-primary text-uppercase fw-bold" style="font-size: 0.7rem;">
+                            <i class="bi bi-eye"></i> Ver detalle y cobrar
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="text-center mt-5">
+            <i class="bi bi-check2-all text-muted" style="font-size: 4rem;"></i>
+            <p class="h4 text-muted">No hay mesas ocupadas por el momento.</p>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="modalTicket" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-lg" id="contenidoTicket">
+            <div class="text-center p-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2">Cargando cuenta...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Cargar el detalle de la cuenta en el Modal
+    function verDetalle(idMesa) {
+        $('#modalTicket').modal('show');
+        $.get('@Url.Action("DetalleCuenta", "Ventas")?idMesa=' + idMesa, function(data) {
+            $('#contenidoTicket').html(data);
+        });
+    }
+
+    // 2. Función para Imprimir (solo la parte del ticket)
+    function imprimirTicket() {
+        var contenido = document.getElementById('seccionImprimible').innerHTML;
+        var ventana = window.open('', 'PRINT', 'height=600,width=400');
+        ventana.document.write('<html><head><title>Ticket de Venta</title>');
+        ventana.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">');
+        ventana.document.write('</head><body style="padding: 20px; font-family: monospace;">');
+        ventana.document.write(contenido);
+        ventana.document.write('</body></html>');
+        ventana.document.close();
+        ventana.focus();
+        setTimeout(() => { ventana.print(); ventana.close(); }, 500);
+    }
+
+    // 3. Función para Cobrar (Cerrar mesa)
+    function confirmarCobro(idComanda, idMesa) {
+        fetch('@Url.Action("CerrarMesa", "Ventas")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `idComanda=${idComanda}&idMesa=${idMesa}`
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                $('#modalTicket').modal('hide');
+                location.reload();
+            } else {
+                alert("Error: " + data.message);
+            }
+        });
+    }
+
+    // Auto-refresco cada 30 segundos
+    setInterval(function() {
+        if (!$('#modalTicket').hasClass('show')) {
+            location.reload();
+        }
+    }, 30000);
+</script>

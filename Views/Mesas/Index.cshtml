@@ -30,3 +30,19 @@
     </a>
 }
 </div>
+<script>
+    // Configura un intervalo para refrescar la página automáticamente
+    // 30000 milisegundos = 30 segundos
+    setInterval(function () {
+        
+        // OPCIONAL: Verificamos si hay algún modal abierto (como el de tomar pedido)
+        // Si el mozo está cargando un pedido, NO refrescamos para no interrumpirlo
+        var modalAbierto = document.querySelector('.modal.show');
+        
+        if (!modalAbierto) {
+            console.log("Sincronizando estado de mesas con el servidor...");
+            location.reload();
+        }
+        
+    }, 30000); 
+</script>

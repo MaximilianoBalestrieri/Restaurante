@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "iovTb1WdePFTZ3T3knCXgXhmdD9DE9NjtNcoy8tfSR0=",
+  "Hash": "vGDxlMIKViNo3SYiPV5M7g3bkBNIgQcqZSxvh+KMuHE=",
   "Source": "RestauranteApp",
   "BasePath": "_content/RestauranteApp",
   "Mode": "Default",
@@ -1674,6 +1674,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\imagenes\\productos\\jarrito.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\CCMEW\\RestauranteApp\\wwwroot\\imagenes\\productos\\lomito.jpg",
+      "SourceId": "RestauranteApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\CCMEW\\RestauranteApp\\wwwroot\\",
+      "BasePath": "_content/RestauranteApp",
+      "RelativePath": "imagenes/productos/lomito#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "hy7y3vypc1",
+      "Integrity": "yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\imagenes\\productos\\lomito.jpg"
     },
     {
       "Identity": "C:\\Users\\CCMEW\\RestauranteApp\\wwwroot\\imagenes\\productos\\pizza.jpg",
@@ -4742,6 +4763,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-m2AfgZN+W3AlMTYdCy6nl7njZQ5Yxdp6aPDUb0GhqGY="
+        }
+      ]
+    },
+    {
+      "Route": "imagenes/productos/lomito.hy7y3vypc1.jpg",
+      "AssetFile": "C:\\Users\\CCMEW\\RestauranteApp\\wwwroot\\imagenes\\productos\\lomito.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "207409"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 23 Dec 2025 01:23:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "hy7y3vypc1"
+        },
+        {
+          "Name": "label",
+          "Value": "imagenes/productos/lomito.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA="
+        }
+      ]
+    },
+    {
+      "Route": "imagenes/productos/lomito.jpg",
+      "AssetFile": "C:\\Users\\CCMEW\\RestauranteApp\\wwwroot\\imagenes\\productos\\lomito.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "207409"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 23 Dec 2025 01:23:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA="
         }
       ]
     },

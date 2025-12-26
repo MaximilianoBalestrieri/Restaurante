@@ -1,0 +1,46 @@
+@using RestauranteApp.Models
+@model List<DetalleCajaViewModel>
+
+@{
+    Layout = null; // Esto evita que intente cargar el menú lateral dentro del modal
+}
+
+<div class="modal-header bg-dark text-white">
+    <h5 class="modal-title">Ticket Mesa #@ViewBag.IdMesa</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th>Cant</th>
+                <th>Producto</th>
+                <th class="text-end">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cant</td>
+                    <td>@item.Nombre</td>
+                    <td class="text-end">$@item.Sub</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-between border-top pt-2">
+        <h4>TOTAL:</h4>
+        <h4 class="text-success fw-bold">$@ViewBag.Total.ToString("N2")</h4>
+    </div>
+</div>
+
+<div class="modal-footer flex-column">
+    <button type="button" class="btn btn-primary w-100 mb-2" onclick="window.print()">
+        <i class="bi bi-printer"></i> IMPRIMIR PRE-CUENTA
+    </button>
+    <button type="button" class="btn btn-success w-100" onclick="confirmarCobro(@ViewBag.IdComanda, @ViewBag.IdMesa)">
+        <i class="bi bi-cash-coin"></i> REGISTRAR PAGO Y LIBERAR
+    </button>
+</div>

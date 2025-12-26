@@ -132,6 +132,18 @@
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-m2AfgZN\u002BW3AlMTYdCy6nl7njZQ5Yxdp6aPDUb0GhqGY="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"18098"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022m2AfgZN\u002BW3AlMTYdCy6nl7njZQ5Yxdp6aPDUb0GhqGY=\u0022"},{"Name":"Last-Modified","Value":"Tue, 23 Dec 2025 00:35:04 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/RestauranteApp/imagenes/productos/lomito.hy7y3vypc1.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\imagenes\productos\lomito.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"hy7y3vypc1"},{"Name":"integrity","Value":"sha256-yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA="},{"Name":"label","Value":"_content/RestauranteApp/imagenes/productos/lomito.jpg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"207409"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA=\u0022"},{"Name":"Last-Modified","Value":"Tue, 23 Dec 2025 01:23:58 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/RestauranteApp/imagenes/productos/lomito.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\imagenes\productos\lomito.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"207409"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA=\u0022"},{"Name":"Last-Modified","Value":"Tue, 23 Dec 2025 01:23:58 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/RestauranteApp/imagenes/productos/pizza.jpg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\imagenes\productos\pizza.jpg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>

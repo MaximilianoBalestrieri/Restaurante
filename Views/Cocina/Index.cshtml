@@ -1,9 +1,67 @@
+@model List<dynamic>
+
 @{
-    ViewBag.Title = "Cocina";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Monitor de Cocina";
 }
 
-<h1>COCINA</h1>
+<div class="container-fluid mt-3">
+    <div class="d-flex justify-content-between align-items-center bg-danger text-white p-3 rounded mb-4 shadow">
+        <h2 class="mb-0"><i class="bi bi-fire"></i> PEDIDOS DE COCINA</h2>
+        <div id="reloj" class="h4 mb-0"></div>
+    </div>
 
-<p>Bienvenido @Context.Session.GetString("Usuario")</p>
-<p>Rol: @Context.Session.GetString("Rol")</p>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @if (Model.Count == 0)
+        {
+            <div class="col-12 text-center mt-5">
+                <h3 class="text-muted">No hay pedidos pendientes. ¡A descansar un poco!</h3>
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+            </div>
+        }
+
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 border-warning shadow">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between">
+                        <span class="fw-bold">MESA #@item.Mesa</span>
+                        <span>Hace 2 mins</span>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">@item.Cantidad x @item.Producto</h4>
+                    </div>
+                    <div class="card-footer p-0">
+                        <button class="btn btn-success w-100 btn-lg rounded-0" 
+                                onclick="marcarListo(@item.IdDetalle)">
+                            <i class="bi bi-check-lg"></i> ¡LISTO!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        // Recargar la página cada 10 segundos para ver pedidos nuevos
+        setTimeout(function() {
+            location.reload();
+        }, 10000);
+
+        function marcarListo(id) {
+            fetch('@Url.Action("MarcarListo", "Cocina")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `idDetalle=${id}`
+            }).then(() => location.reload());
+        }
+
+        // Reloj en tiempo real
+        setInterval(() => {
+            document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+    </script>
+}

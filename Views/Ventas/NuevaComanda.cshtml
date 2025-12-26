@@ -105,63 +105,110 @@
             cantidad = d.Cantidad 
         })));
 
-        // Ejecutamos renderizar apenas carga la página
         document.addEventListener("DOMContentLoaded", function() {
             renderizarPedido();
         });
 
+        // ESTA FUNCIÓN AHORA SÍ GUARDA EN DB
         function agregarAlPedido(id, nombre, precio) {
-            const item = pedido.find(p => p.id === id);
-            if (item) {
-                item.cantidad++;
-            } else {
-                pedido.push({ id, nombre, precio, cantidad: 1 });
+            // 1. Primero avisamos al servidor (Base de Datos)
+            fetch('@Url.Action("AgregarProductoAjax", "Ventas")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `idMesa=@Model.IdMesa&idProducto=${id}&precio=${precio}`
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // 2. Si el servidor respondió OK, actualizamos la vista
+                    const item = pedido.find(p => p.id === id);
+                    if (item) {
+                        item.cantidad++;
+                    } else {
+                        pedido.push({ id, nombre, precio, cantidad: 1 });
+                    }
+                    renderizarPedido();
+                } else {
+                    alert("Error al guardar en DB: " + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function renderizarPedido() {
+            let html = "";
+            let total = 0;
+            pedido.forEach(item => {
+                let subtotal = item.precio * item.cantidad;
+                html += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">${item.cantidad}</span>
+                        </td>
+                        <td class="text-end">$${subtotal.toFixed(2)}</td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-danger btn-sm" onclick="quitarDelPedido(${item.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                total += subtotal;
+            });
+            document.getElementById("detallePedido").innerHTML = html;
+            document.getElementById("totalComanda").innerText = total.toFixed(2);
+        }
+
+        function quitarDelPedido(idProducto) {
+            if(!confirm("¿Quitar este producto del pedido?")) return;
+
+            fetch('@Url.Action("EliminarProductoAjax", "Ventas")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `idMesa=@Model.IdMesa&idProducto=${idProducto}`
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    pedido = pedido.filter(p => p.id !== idProducto);
+                    renderizarPedido();
+                }
+            });
+        }
+
+        function enviarCocina() {
+            if (pedido.length === 0) {
+                alert("No hay productos para enviar.");
+                return;
             }
-            renderizarPedido();
-            
-            // OPCIONAL: Aquí llamaremos a una función para guardar en DB en tiempo real
-            // guardarEnBaseDeDatos(id, 1); 
+
+            if (!confirm("¿Confirmar pedido y enviar a preparación?")) return;
+
+            fetch('@Url.Action("DespacharComanda", "Ventas")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `idMesa=@Model.IdMesa`
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Pedido enviado correctamente.");
+                    window.location.href = '@Url.Action("Index", "Mesas")';
+                }
+            });
         }
 
-       function renderizarPedido() {
-    let html = "";
-    let total = 0;
-    pedido.forEach(item => {
-        let subtotal = item.precio * item.cantidad;
-        html += `
-            <tr>
-                <td>${item.nombre}</td>
-                <td class="text-center">
-                    <span class="badge bg-light text-dark border">${item.cantidad}</span>
-                </td>
-                <td class="text-end">$${subtotal.toFixed(2)}</td>
-                <td class="text-center">
-                    <button class="btn btn-outline-danger btn-sm" onclick="quitarDelPedido(${item.id})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            </tr>`;
-        total += subtotal;
-    });
-    document.getElementById("detallePedido").innerHTML = html;
-    document.getElementById("totalComanda").innerText = total.toFixed(2);
-}
-
-function quitarDelPedido(idProducto) {
-    if(!confirm("¿Quitar este producto del pedido?")) return;
-
-    fetch('@Url.Action("EliminarProductoAjax", "Ventas")', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `idMesa=@Model.IdMesa&idProducto=${idProducto}`
-    })
-    .then(r => r.json())
-    .then(data => {
-        if(data.success) {
-            pedido = pedido.filter(p => p.id !== idProducto);
-            renderizarPedido();
+        // Se ejecuta cada 30 segundos
+    setInterval(function () {
+        // Solo refresca si el mozo está viendo el mapa (sin modales abiertos)
+        // Esto evita que se le cierre la ventana si justo está cargando un pedido
+        var modalAbierto = $('.modal.show').length; 
+        
+        if (modalAbierto === 0) {
+            console.log("Actualizando estado de mesas...");
+            location.reload();
         }
-    });
-}
+    }, 30000);
     </script>
+
 }

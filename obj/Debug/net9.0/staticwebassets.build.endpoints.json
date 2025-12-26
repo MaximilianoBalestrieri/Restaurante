@@ -2067,6 +2067,88 @@
       ]
     },
     {
+      "Route": "imagenes/productos/lomito.hy7y3vypc1.jpg",
+      "AssetFile": "imagenes/productos/lomito.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "207409"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 23 Dec 2025 01:23:58 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "hy7y3vypc1"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA="
+        },
+        {
+          "Name": "label",
+          "Value": "imagenes/productos/lomito.jpg"
+        }
+      ]
+    },
+    {
+      "Route": "imagenes/productos/lomito.jpg",
+      "AssetFile": "imagenes/productos/lomito.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "207409"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 23 Dec 2025 01:23:58 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-yXuT7hkU85BYAxEuZELkfVgFWzgIm8zn98GnDluC/AA="
+        }
+      ]
+    },
+    {
       "Route": "imagenes/productos/pizza.jpg",
       "AssetFile": "imagenes/productos/pizza.jpg",
       "Selectors": [],
