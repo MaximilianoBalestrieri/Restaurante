@@ -76,9 +76,9 @@ namespace RestauranteApp.Controllers
             }
 
             // 🔐 Sesión
+            HttpContext.Session.SetString("IdUsuario", user.IdUsuario.ToString()); // <-- AGREGA ESTA LÍNEA
             HttpContext.Session.SetString("Usuario", user.NombreUsuario);
             HttpContext.Session.SetString("NombreCompleto", user.NombreCompleto);
-
             HttpContext.Session.SetString("Rol", user.Rol);
 
             // 🚦 Redirección por rol - va a la pagina segun su rol --------------

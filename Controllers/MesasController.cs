@@ -17,6 +17,8 @@ namespace RestauranteApp.Controllers
 
         public IActionResult Index()
         {
+            var idUsuarioStr = HttpContext.Session.GetString("IdUsuario");
+            var rol = HttpContext.Session.GetString("Rol");
             var mesas = new List<Mesa>();
             _db.Open();
             using (var cmd = _db.CreateCommand())

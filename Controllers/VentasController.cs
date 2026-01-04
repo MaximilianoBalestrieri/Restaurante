@@ -219,35 +219,78 @@ namespace RestauranteApp.Controllers
             finally { _db.Close(); }
         }
 
-        [HttpPost]
-        public IActionResult CerrarMesa(int idComanda, int idMesa)
+       [HttpPost]
+public IActionResult CerrarMesa(int idComanda, int idMesa)
+{
+    try
+    {
+        // 1. Obtener ID del cajero de la sesión
+        var idUsuarioStr = HttpContext.Session.GetString("IdUsuario");
+        if (string.IsNullOrEmpty(idUsuarioStr)) 
+            return Json(new { success = false, message = "Sesión expirada o usuario no identificado." });
+
+        if (_db.State == ConnectionState.Closed) _db.Open();
+
+        // Iniciamos una transacción para que se hagan los dos cambios o ninguno
+        using (var transaction = _db.BeginTransaction())
         {
-            try {
-                if (_db.State == ConnectionState.Closed) _db.Open();
-                
-                // 1. Cerrar Comanda
-                using (var cmd = _db.CreateCommand()) {
-                    cmd.CommandText = "UPDATE comanda SET Estado = 'CERRADA' WHERE IdComanda = @idC";
-                    var p = cmd.CreateParameter(); p.ParameterName = "@idC"; p.Value = idComanda;
-                    cmd.Parameters.Add(p);
+            try
+            {
+                // 2. ACTUALIZAR COMANDA (Estado y Cajero)
+                using (var cmd = _db.CreateCommand())
+                {
+                    cmd.Transaction = transaction;
+                    cmd.CommandText = "UPDATE comanda SET Estado = 'CERRADA', IdUsuario = @idU WHERE IdComanda = @idC";
+
+                    // Crear y agregar parámetro IdUsuario
+                    var pIdU = cmd.CreateParameter();
+                    pIdU.ParameterName = "@idU";
+                    pIdU.Value = Convert.ToInt32(idUsuarioStr);
+                    cmd.Parameters.Add(pIdU);
+
+                    // Crear y agregar parámetro IdComanda
+                    var pIdC = cmd.CreateParameter();
+                    pIdC.ParameterName = "@idC";
+                    pIdC.Value = idComanda;
+                    cmd.Parameters.Add(pIdC);
+
                     cmd.ExecuteNonQuery();
                 }
 
-                // 2. Liberar Mesa
-                using (var cmdMesa = _db.CreateCommand()) {
+                // 3. LIBERAR MESA
+                using (var cmdMesa = _db.CreateCommand())
+                {
+                    cmdMesa.Transaction = transaction;
                     cmdMesa.CommandText = "UPDATE Mesa SET Estado = 'LIBRE' WHERE IdMesa = @idM";
-                    var pM = cmdMesa.CreateParameter(); pM.ParameterName = "@idM"; pM.Value = idMesa;
-                    cmdMesa.Parameters.Add(pM);
+                    
+                    var pIdM = cmdMesa.CreateParameter();
+                    pIdM.ParameterName = "@idM";
+                    pIdM.Value = idMesa;
+                    cmdMesa.Parameters.Add(pIdM);
+
                     cmdMesa.ExecuteNonQuery();
                 }
+
+                transaction.Commit();
                 return Json(new { success = true });
             }
-            catch (Exception ex) { return Json(new { success = false, message = ex.Message }); }
-            finally { _db.Close(); }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw ex; // Re-lanzar para que lo atrape el catch externo
+            }
         }
+    }
+    catch (Exception ex)
+    {
+        return Json(new { success = false, message = "Error: " + ex.Message });
+    }
+    finally
+    {
+        _db.Close();
+    }
+}
 
-        // --- TUS OTROS MÉTODOS (Eliminar y Despachar se mantienen igual) ---
-        [HttpPost]
 [HttpPost]
 public IActionResult EliminarProductoAjax(int idMesa, int idProducto)
 {
@@ -361,7 +404,6 @@ public IActionResult DetalleCuenta(int idMesa)
         
         using (var cmd = _db.CreateCommand())
         {
-            // Usamos los campos exactos de tu tabla detalle_comanda
             cmd.CommandText = @"SELECT c.IdComanda, p.Nombre, d.Cantidad, d.PrecioUnitario, d.Subtotal 
                                 FROM comanda c 
                                 INNER JOIN detalle_comanda d ON c.IdComanda = d.IdComanda
@@ -391,14 +433,30 @@ public IActionResult DetalleCuenta(int idMesa)
             }
         }
 
-        // Si no hay productos, mostramos un aviso
-        if (idComanda == 0) return Content("<div class='alert alert-warning'>Mesa sin consumos.</div>", "text/html");
+        // --- LÓGICA PARA MESA SIN CONSUMO ---
+        if (idComanda == 0) 
+        {
+            // Intentamos obtener el IdComanda de la comanda que está abierta pero vacía
+            using (var cmdVacia = _db.CreateCommand())
+            {
+                cmdVacia.CommandText = "SELECT IdComanda FROM comanda WHERE IdMesa = @idM AND Estado = 'ABIERTA' LIMIT 1";
+                var pM = cmdVacia.CreateParameter(); pM.ParameterName = "@idM"; pM.Value = idMesa;
+                cmdVacia.Parameters.Add(pM);
+                var res = cmdVacia.ExecuteScalar();
+                
+                if (res != null) {
+                    idComanda = Convert.ToInt32(res);
+                    ViewBag.MesaVacia = true;
+                } else {
+                    return Content("<div class='alert alert-danger'>No se encontró una comanda abierta para esta mesa.</div>");
+                }
+            }
+        }
 
         ViewBag.Total = total;
         ViewBag.IdMesa = idMesa;
         ViewBag.IdComanda = idComanda;
 
-        // IMPORTANTE: Asegúrate de que el archivo se llame DetalleCuenta.cshtml
         return PartialView("DetalleCuenta", items);
     }
     catch (Exception ex) 
@@ -407,6 +465,5 @@ public IActionResult DetalleCuenta(int idMesa)
     }
     finally { _db.Close(); }
 }
-
     }
 }

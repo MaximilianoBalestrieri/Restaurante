@@ -15,7 +15,12 @@ namespace RestauranteApp.Controllers
         }
 
         public IActionResult Index()
+
         {
+           var rol = HttpContext.Session.GetString("Rol");
+    var nombre = HttpContext.Session.GetString("NombreCompleto");
+ViewBag.NombreUsuario = nombre;
+ViewBag.Rol=rol;
             var pedidosPendientes = new List<dynamic>(); // Usamos dynamic para simplificar el JOIN rápido
 
             if (_db.State == ConnectionState.Closed) _db.Open();
