@@ -1,0 +1,173 @@
+@model dynamic
+@{ Layout = null; }
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte Z - El Aljibe</title>
+    <style>
+        /* CSS BASE (Se aplica a todo) */
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px; 
+            line-height: 1.2;
+            color: #000;
+            -webkit-font-smoothing: none;
+        }
+
+        .ticket {
+            width: 100%;
+            max-width: 185px; /* Ancho real para 58mm */
+            margin: 0;
+            padding: 2px;
+            box-sizing: border-box;
+            background-color: #fff; /* Asegura fondo blanco */
+        }
+
+        .centered { text-align: center; }
+        .right { text-align: right; }
+        .bold { font-weight: 900; }
+        
+        .header strong { font-size: 16px; font-weight: 900; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            table-layout: fixed;
+        }
+
+        td {
+            padding: 3px 0;
+            vertical-align: top;
+        }
+
+        hr { border: 0; border-top: 1px solid #000; margin: 8px 0; }
+        .dashed { border-top: 1px dashed #000; }
+
+        .total-z {
+            font-size: 15px;
+            font-weight: 600;
+            border-top: 1px solid #000;
+            padding-top: 4px;
+        }
+
+        /* --- CSS SOLO PARA PANTALLA (No para impresión) --- */
+        @@media screen {
+            body { 
+                background-color: #f4f7f6; /* Fondo gris para la página */
+                padding: 20px;
+                margin: 0;
+            }
+
+            /* Contenedor que centra el ticket en la pantalla */
+            .pantalla-contenedor {
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                min-height: 100vh;
+                width: 100%;
+            }
+
+            /* Estilo para que el ticket parezca papel en la pantalla */
+            .ticket {
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra suave */
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 10px; /* Un poco más de aire en pantalla */
+            }
+        }
+
+        /* --- CSS SOLO PARA IMPRESIÓN --- */
+        @@media print {
+            .no-print { display: none !important; }
+            
+            /* Quitamos contenedores y fondos de pantalla */
+            .pantalla-contenedor { display: block !important; width: auto !important; height: auto !important; }
+            body { background-color: #fff !important; padding: 0 !important; margin: 0 !important; }
+            
+            /* Aseguramos que el ticket ocupe el ancho del papel */
+            .ticket {
+                width: 100% !important;
+                max-width: 185px !important;
+                margin: 0 !important;
+                padding: 2px !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            
+            @@page { margin: 0; }
+        }
+    </style>
+</head>
+<body onload="window.print();">
+    
+    <div class="no-print" style="background: #eee; padding: 15px; text-align: center; border-bottom: 1px solid #ccc; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
+        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #198754; color: white; border: none; border-radius: 5px; font-weight: bold;">
+            <i class="bi bi-printer"></i> IMPRIMIR CIERRE Z
+        </button>
+        <a href="@Url.Action("Index", "Home")" style="text-decoration: none; display: inline-block; padding: 10px 20px; background: #0d6efd; color: white; border-radius: 5px; margin-left: 10px; font-weight: bold;">
+            <i class="bi bi-house-door"></i> VOLVER AL INICIO
+        </a>
+    </div>
+
+    <div class="pantalla-contenedor" style="margin-top: 80px; /* Espacio para los botones fijos */">
+        
+        <div class="ticket">
+            <div class="centered header">
+                <strong>CIERRE DE CAJA "Z"</strong><br>
+                <strong>EL ALJIBE </strong><br>
+                La Paz, Córdoba, Argentina<br>
+                <hr class="dashed">
+            </div>
+
+            <div style="margin-bottom: 5px;">
+                FECHA: @Model.Fecha.ToString("dd/MM/yyyy HH:mm")<br>
+                CAJERO: @Model.Cajero<br>
+                CANT. TICKETS: @Model.Cant
+            </div>
+            
+            <hr>
+            
+            <table>
+                <tr>
+                    <td style="width: 60%;">FONDO INICIO:</td>
+                    <td class="right">$@Model.Apertura.ToString("N2")</td>
+                </tr>
+                <tr>
+                    <td>VENTAS EFECT.:</td>
+                    <td class="right">$@Model.Efectivo.ToString("N2")</td>
+                </tr>
+                <tr class="total-z">
+                    <td class="bold">TOTAL CAJÓN:</td>
+                    <td class="right bold">$@((Model.Efectivo + Model.Apertura).ToString("N2"))</td>
+                </tr>
+                
+                <tr><td colspan="2"><hr class="dashed"></td></tr>
+                
+                <tr>
+                    <td>TRANSFERENCIA:</td>
+                    <td class="right">$@Model.Transf.ToString("N2")</td>
+                </tr>
+                <tr>
+                    <td>TARJETAS:</td>
+                    <td class="right">$@Model.Tarjeta.ToString("N2")</td>
+                </tr>
+                
+                <tr><td colspan="2"><hr></td></tr>
+                
+                <tr style="font-size: 16px;">
+                    <td class="bold">TOTAL GRAL:</td>
+                    <td class="right bold">$@Model.Total.ToString("N2")</td>
+                </tr>
+            </table>
+
+            <br><br><br><br>
+            <div class="centered">
+                _______________________<br>
+                FIRMA RESPONSABLE
+            </div>
+
+            <br><br><br><br>
+            <div class="centered">.</div>
+        </div> </div> </body>
+</html>

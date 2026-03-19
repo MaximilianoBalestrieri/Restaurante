@@ -11,10 +11,11 @@ namespace RestauranteApp.Controllers
     public class ProductosController : Controller
     {
         private readonly IDbConnection _db;
-
-        public ProductosController(IDbConnection db)
+        private readonly IWebHostEnvironment _env;
+        public ProductosController(IDbConnection db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
         }
 
         // LISTADO DE PRODUCTOS
@@ -102,45 +103,71 @@ namespace RestauranteApp.Controllers
 
         // ACCIÓN PARA GUARDAR (CREAR O EDITAR)
         [HttpPost]
-        public IActionResult Guardar(Producto p)
+public IActionResult Guardar(Producto p, IFormFile archivoImagen)
+{
+    // 1. Manejo de la Imagen Física
+    if (archivoImagen != null && archivoImagen.Length > 0)
+    {
+        // Creamos un nombre único (ej: a1b2c3.jpg) para no pisar fotos con el mismo nombre
+        string nombreUnico = Guid.NewGuid().ToString() + Path.GetExtension(archivoImagen.FileName);
+        
+        // Definimos la ruta física: wwwroot/imagenes/productos
+        string rutaCarpeta = Path.Combine(_env.WebRootPath, "imagenes", "productos");
+        
+        // Si la carpeta no existe, la creamos
+        if (!Directory.Exists(rutaCarpeta)) Directory.CreateDirectory(rutaCarpeta);
+
+        string rutaCompleta = Path.Combine(rutaCarpeta, nombreUnico);
+
+        // Guardamos el archivo en el servidor
+        using (var stream = new FileStream(rutaCompleta, FileMode.Create))
         {
-            if (_db.State == ConnectionState.Closed) _db.Open();
-            using (var cmd = _db.CreateCommand())
-            {
-                if (p.IdProducto == 0)
-                {
-                    // INSERTAR NUEVO
-                    cmd.CommandText = "INSERT INTO producto (Nombre, Precio, Imagen, IdCategoria, Activo) VALUES (@nom, @pre, @img, @cat, @act)";
-                }
-                else
-                {
-                    // ACTUALIZAR EXISTENTE
-                    cmd.CommandText = "UPDATE producto SET Nombre=@nom, Precio=@pre, Imagen=@img, IdCategoria=@cat, Activo=@act WHERE IdProducto=@id";
-                    var pId = cmd.CreateParameter();
-                    pId.ParameterName = "@id";
-                    pId.Value = p.IdProducto;
-                    cmd.Parameters.Add(pId);
-                }
-
-                // Parámetros comunes
-                var pNom = cmd.CreateParameter(); pNom.ParameterName = "@nom"; pNom.Value = p.Nombre ?? "";
-                var pPre = cmd.CreateParameter(); pPre.ParameterName = "@pre"; pPre.Value = p.Precio;
-                var pImg = cmd.CreateParameter(); pImg.ParameterName = "@img"; pImg.Value = p.Imagen ?? "/imagenes/productos/default.png";
-                var pCat = cmd.CreateParameter(); pCat.ParameterName = "@cat"; pCat.Value = p.IdCategoria;
-                var pAct = cmd.CreateParameter(); pAct.ParameterName = "@act"; pAct.Value = p.Activo;
-
-                cmd.Parameters.Add(pNom);
-                cmd.Parameters.Add(pPre);
-                cmd.Parameters.Add(pImg);
-                cmd.Parameters.Add(pCat);
-                cmd.Parameters.Add(pAct);
-
-                cmd.ExecuteNonQuery();
-            }
-            _db.Close();
-
-            return RedirectToAction("Index");
+            archivoImagen.CopyTo(stream);
         }
+
+        // Guardamos la ruta relativa para la Base de Datos
+        p.Imagen = "/imagenes/productos/" + nombreUnico;
+    }
+    else if (string.IsNullOrEmpty(p.Imagen))
+    {
+        // Si no subió nada y no tenía imagen previa, ponemos la de por defecto
+        p.Imagen = "/imagenes/no-disponible.png";
+    }
+
+    // 2. Lógica de Base de Datos (Tu código con el ajuste de p.Imagen)
+    if (_db.State == ConnectionState.Closed) _db.Open();
+    
+    using (var cmd = _db.CreateCommand())
+    {
+        if (p.IdProducto == 0)
+        {
+            cmd.CommandText = "INSERT INTO producto (Nombre, Precio, Imagen, IdCategoria, Activo) VALUES (@nom, @pre, @img, @cat, @act)";
+        }
+        else
+        {
+            cmd.CommandText = "UPDATE producto SET Nombre=@nom, Precio=@pre, Imagen=@img, IdCategoria=@cat, Activo=@act WHERE IdProducto=@id";
+            var pId = cmd.CreateParameter(); pId.ParameterName = "@id"; pId.Value = p.IdProducto;
+            cmd.Parameters.Add(pId);
+        }
+
+        var pNom = cmd.CreateParameter(); pNom.ParameterName = "@nom"; pNom.Value = p.Nombre ?? "";
+        var pPre = cmd.CreateParameter(); pPre.ParameterName = "@pre"; pPre.Value = p.Precio;
+        var pImg = cmd.CreateParameter(); pImg.ParameterName = "@img"; pImg.Value = p.Imagen;
+        var pCat = cmd.CreateParameter(); pCat.ParameterName = "@cat"; pCat.Value = p.IdCategoria;
+        var pAct = cmd.CreateParameter(); pAct.ParameterName = "@act"; pAct.Value = p.Activo;
+
+        cmd.Parameters.Add(pNom);
+        cmd.Parameters.Add(pPre);
+        cmd.Parameters.Add(pImg);
+        cmd.Parameters.Add(pCat);
+        cmd.Parameters.Add(pAct);
+
+        cmd.ExecuteNonQuery();
+    }
+    _db.Close();
+
+    return RedirectToAction("Index");
+}
 
         // ACCIÓN PARA ELIMINAR (O DESACTIVAR)
         public IActionResult Eliminar(int id)

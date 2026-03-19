@@ -1,6 +1,8 @@
 @model RestauranteApp.Models.Producto
 @{
     ViewData["Title"] = Model.IdProducto == 0 ? "Nuevo Producto" : "Editar Producto";
+    // Si no hay imagen, usamos la de "no disponible"
+    string imagenActual = string.IsNullOrEmpty(Model.Imagen) ? "/imagenes/no-disponible.png" : Model.Imagen;
 }
 
 <div class="container mt-4">
@@ -9,49 +11,85 @@
             <h4 class="mb-0">@ViewData["Title"]</h4>
         </div>
         <div class="card-body">
-            <form asp-action="Guardar" method="post">
+            <form asp-action="Guardar" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="IdProducto" />
+                
+                <input type="hidden" asp-for="Imagen" />
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Nombre del Producto</label>
-                    <input asp-for="Nombre" class="form-control" placeholder="Ej: Pizza Napolitana" required />
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nombre del Producto</label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Ej: Pizza Napolitana" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Precio ($)</label>
+                            <input asp-for="Precio" type="number" step="0.01" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 text-center">
+                        <label class="form-label fw-bold">Vista Previa</label>
+                        <div class="border rounded p-1 bg-light" style="height: 120px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img id="imgPreview" src="@imagenActual" style="max-width: 100%; max-height: 100%; object-fit: cover;" alt="Vista previa" />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Precio ($)</label>
-                    <input asp-for="Precio" type="number" step="0.01" class="form-control" required />
+                    <label class="form-label fw-bold">Imagen del Producto</label>
+                    <input type="file" name="archivoImagen" id="archivoImagen" class="form-control" accept="image/*" onchange="previewImage(this)" />
+                    <small class="text-muted">Selecciona una imagen desde tu PC (.jpg, .png, .webp)</small>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Ruta de Imagen</label>
-                    <input asp-for="Imagen" class="form-control" placeholder="/imagenes/productos/nombre.jpg" />
-                    <small class="text-muted">Si se deja vacío, se usará la imagen por defecto.</small>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Categoría</label>
-                    <select asp-for="IdCategoria" class="form-select">
-                        <option value="1">Comidas (1)</option>
-                        <option value="2">Bebidas (2)</option>
-                        <option value="3">Postres (3)</option>
-                        <option value="4">Cafetería (4)</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Estado</label>
-                    <select asp-for="Activo" class="form-select">
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
-                    </select>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Categoría</label>
+                            <select asp-for="IdCategoria" class="form-select">
+                                <option value="1">Comidas</option>
+                                <option value="2">Bebidas</option>
+                                <option value="3">Postres</option>
+                                <option value="4">Cafetería</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Estado</label>
+                            <select asp-for="Activo" class="form-select">
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <hr />
                 <div class="d-flex justify-content-between">
                     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-success">Guardar Producto</button>
+                    <button type="submit" class="btn btn-success px-4">Guardar Producto</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Función para previsualizar la imagen antes de subirla
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imgPreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // Si no hay archivo, volvemos a la imagen original o a la de por defecto
+                $('#imgPreview').attr('src', '@imagenActual');
+            }
+        }
+    </script>
+}

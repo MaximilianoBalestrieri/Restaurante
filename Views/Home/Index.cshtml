@@ -1,52 +1,174 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
-}
-@{
-    ViewData["Title"] = "Inicio";
+    ViewData["Title"] = "Inicio - El Aljibe";
 }
 
 <div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h1 class="display-5 fw-bold text-dark">Hola, @ViewBag.NombreUsuario!</h1>
-            <p class="lead text-muted">Este es el resumen de tu turno hoy.</p>
-        </div>
-    </div>
-
-    @if (ViewBag.ErrorSQL != null)
+    @if (ViewBag.CajaAbierta == false)
     {
-        <div class="alert alert-danger">@ViewBag.ErrorSQL</div>
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card shadow-lg border-0 mt-5">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h4 class="mb-0 fw-bold"><i class="bi bi-safe2 me-2"></i>Apertura de Turno</h4>
+                    </div>
+                    <div class="card-body p-5 text-center">
+                        <p class="text-muted">Para comenzar a operar en <strong>El Aljibe</strong>, ingresa el monto inicial (fondo de caja).</p>
+                        
+                        <div class="input-group input-group-lg mb-4">
+                            <span class="input-group-text bg-light text-primary fw-bold">$</span>
+                            <input type="number" id="montoApertura" class="form-control" placeholder="0.00" autofocus>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-lg w-100 shadow" onclick="abrirCaja()">
+                            <i class="bi bi-play-circle me-2"></i> INICIAR JORNADA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
+    else
+    {
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold text-dark">Hola, @ViewBag.NombreUsuario!</h1>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-success me-2 px-3 py-2">CAJA ABIERTA</span>
+                    <p class="lead text-muted mb-0">
+                        Iniciaste con: <strong>$@ViewBag.MontoInicial.ToString("N2")</strong>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-danger btn-lg shadow-sm px-4" onclick="realizarCierreCaja()">
+                    <i class="bi bi-lock-fill me-2"></i> CERRAR CAJA (Z)
+                </button>
+            </div>
+        </div>
 
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-primary text-white p-3">
-                <div class="card-body">
-                    <h6 class="text-uppercase small fw-bold">Mi Recaudación</h6>
-                    <h2 class="display-6 fw-bold">$@ViewBag.TotalVentasPropio</h2>
-                    <i class="bi bi-currency-dollar position-absolute top-0 end-0 m-3 opacity-25" style="font-size: 3rem;"></i>
+        @if (ViewBag.ErrorSQL != null)
+        {
+            <div class="alert alert-danger shadow-sm">@ViewBag.ErrorSQL</div>
+        }
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm bg-success text-white h-100">
+                    <div class="card-body p-4">
+                        <h6 class="text-uppercase small fw-bold opacity-75">Efectivo en Ventas</h6>
+                        <h2 class="display-6 fw-bold">$@ViewBag.TotalEfectivo.ToString("N2")</h2>
+                        <i class="bi bi-cash-stack position-absolute top-0 end-0 m-3 opacity-25" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                    <div class="card-body p-4">
+                        <h6 class="text-uppercase small fw-bold opacity-75">Transferencias / V. Digital</h6>
+                        <h2 class="display-6 fw-bold">$@ViewBag.TotalTransf.ToString("N2")</h2>
+                        <i class="bi bi-phone position-absolute top-0 end-0 m-3 opacity-25" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm bg-info text-white h-100">
+                    <div class="card-body p-4">
+                        <h6 class="text-uppercase small fw-bold opacity-75">Tarjetas Débito/Crédito</h6>
+                        <h2 class="display-6 fw-bold">$@ViewBag.TotalTarjeta.ToString("N2")</h2>
+                        <i class="bi bi-credit-card position-absolute top-0 end-0 m-3 opacity-25" style="font-size: 3rem;"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-success text-white p-3">
-                <div class="card-body">
-                    <h6 class="text-uppercase small fw-bold">Salón (Mesas Ocupadas)</h6>
-                    <h2 class="display-6 fw-bold">@ViewBag.MesasOcupadas</h2>
-                    <i class="bi bi-grid-3x3-gap position-absolute top-0 end-0 m-3 opacity-25" style="font-size: 3rem;"></i>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-2">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-receipt text-warning h3 mb-0"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 text-muted">Tickets Hoy</h6>
+                            <h4 class="fw-bold mb-0">@ViewBag.CantidadVentas</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm bg-dark text-white p-3">
-                <div class="card-body">
-                    <h6 class="text-uppercase small fw-bold">Más Vendido Hoy</h6>
-                    <h3 class="fw-bold">@ViewBag.ProductoEstrella</h3>
-                    <i class="bi bi-star-fill position-absolute top-0 end-0 m-3 text-warning opacity-50" style="font-size: 3rem;"></i>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-2">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-people text-danger h3 mb-0"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 text-muted">Mesas Ocupadas</h6>
+                            <h4 class="fw-bold mb-0">@ViewBag.MesasOcupadas</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
+            @* <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-2 text-dark bg-light">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="bg-dark bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-star-fill text-dark h3 mb-0"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 text-muted">Producto Estrella</h6>
+                            <h5 class="fw-bold mb-0">@ViewBag.ProductoEstrella</h5>
+                        </div>
+                    </div>
+                </div>
+            </div> *@
         </div>
-    </div>
+    }
 </div>
+
+@section Scripts {
+    <script>
+        // Función para abrir la caja
+        function abrirCaja() {
+            var monto = $("#montoApertura").val();
+            if (monto === "" || monto < 0) {
+                alert("Por favor, ingrese un monto inicial válido (puede ser 0).");
+                return;
+            }
+
+            $.post('@Url.Action("ProcesarApertura", "Home")', { monto: monto }, function(res) {
+                if (res.success) {
+                    location.reload();
+                } else {
+                    alert("Error al abrir caja: " + res.message);
+                }
+            });
+        }
+
+        // Función para realizar el cierre Z
+        function realizarCierreCaja() {
+    if (confirm("¿Confirmar CIERRE DE CAJA? Se emitirá el reporte Z y se cerrará el turno.")) {
+        $.post('@Url.Action("ProcesarCierre", "Home")', function(res) {
+            if (res.success) {
+                // REDIRECCIÓN DIRECTA: No falla con los pop-ups
+                window.location.href = '@Url.Action("ImprimirCierre", "Home")' + '?idCierre=' + res.idCierre;
+            } else {
+                alert("Error al procesar el cierre: " + res.message);
+            }
+        });
+    }
+}
+
+        // Refresco automático solo si la caja está abierta
+        @if (ViewBag.CajaAbierta == true)
+        {
+            <text>
+            setTimeout(function() {
+                location.reload();
+            }, 60000);
+            console.log("Tablero actualizado automáticamente.");
+            </text>
+        }
+    </script>
+}

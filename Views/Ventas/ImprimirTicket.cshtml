@@ -1,0 +1,137 @@
+@model List<RestauranteApp.Models.DetalleCajaViewModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Mesa @ViewBag.Mesa</title>
+   <style>
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        background-color: #fff;
+    }
+
+    .ticket {
+        width: 100%;
+        max-width: 180px; /* AJUSTE 1: Subimos de 160 a 180 para ocupar más ancho */
+        margin: 0;
+        padding: 2px;
+        box-sizing: border-box;
+    }
+
+    * {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px; 
+        line-height: 1.1;
+        color: #000;
+        -webkit-font-smoothing: none;
+    }
+
+    .centered { text-align: center; }
+    .right { text-align: right; }
+    
+    .header strong {
+        font-size: 16px;
+        font-weight: 900; 
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+    }
+
+    th {
+        border-bottom: 1px solid #000;
+        padding-bottom: 2px;
+        font-weight: 600;
+    }
+
+    td {
+        padding: 4px 0;
+        vertical-align: top;
+        font-weight: 500;
+    }
+
+    .total-row {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+        border-top: 2px solid #000;
+        padding-top: 5px;
+    }
+
+    @@media print {
+        .no-print { display: none; }
+        @@page {
+            margin: 0;
+        }
+    }
+</style>
+</head>
+<body onload="window.print();">
+    <div class="no-print" style="background: #eee; padding: 15px; text-align: center; border-bottom: 1px solid #ccc;">
+        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #198754; color: white; border: none; border-radius: 5px;">
+            <i class="bi bi-printer"></i> IMPRIMIR
+        </button>
+        <a href="@Url.Action("Index", "Ventas")" style="text-decoration: none; display: inline-block; padding: 10px 20px; background: #0d6efd; color: white; border-radius: 5px; margin-left: 10px;">
+            VOLVER AL SALÓN
+        </a>
+        <hr>
+    </div>
+
+    <div class="ticket">
+        <div class="centered">
+            <strong>PARRILLA RESTAURANT </strong><br>
+             <strong>EL ALJIBE </strong><br>
+            La Paz - Córdoba<br>
+            --------------------------------
+        </div>
+        <br>TICKET #@(((int)ViewBag.IdComanda).ToString("D8")) <br>
+        <p>FECHA: @ViewBag.Fecha<br>
+        MESA: #@ViewBag.Mesa</p>
+        
+        <hr>
+        <table>
+            <thead>
+                <tr>
+                    <th align="left">C.</th>
+                    <th align="left">DETALLE</th>
+                    <th align="right">SUB.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td style="width: 15%;">@item.Cant</td>
+                        <td style="width: 55%; padding-right: 10px;">@item.Nombre</td>
+                        <td style="width: 30%;" class="right">@item.Sub</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <hr>
+        
+        <div class="right total-row">
+            TOTAL: $@ViewBag.Total.ToString("N2")
+        </div>
+
+        <br>
+        <div class="centered">
+            PAGADO CON: @ViewBag.MetodoPago
+        </div>
+        
+        <br>
+        <div class="centered">
+            ¡Gracias por su visita!<br><br><br>
+            *************************
+        </div>
+        <br><br><br><br><br>
+    </div>
+</body>
+</html>

@@ -3,10 +3,7 @@
 @{
     ViewData["Title"] = "Monitor de Cocina";
 }
- <div class="col">
-        
-            <p class="lead text-muted">Siempre Positivo!!</p>
-        </div>
+
 <div class="container-fluid mt-3">
     <div class="d-flex justify-content-between align-items-center bg-danger text-white p-3 rounded mb-4 shadow">
         <h2 class="mb-0"><i class="bi bi-fire"></i> PEDIDOS DE COCINA</h2>
@@ -16,27 +13,53 @@
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @if (Model.Count == 0)
         {
-            <div class="col-12 text-center mt-5">
-                <h3 class="text-muted">No hay pedidos pendientes. ¡A descansar un poco!</h3>
-                <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-            </div>
+            <div style="
+        display: grid;
+        place-items: center;
+        align-content: center;
+        min-height: 70vh;
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+    ">
+        <div>
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 8rem; opacity: 0.2;"></i>
+            <h2 class="text-muted fw-bold display-5 mt-3">¡TODO AL DÍA!</h2>
+            <p class="lead text-muted">No hay pedidos pendientes en <strong>El Aljibe</strong>.</p>
+            @* <div style="display: inline-block; background: #198754; color: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                MODO DESCANSO ACTIVADO
+            </div> *@
+        </div>
+    </div>
         }
 
         @foreach (var item in Model)
         {
+            // Calculamos los minutos de espera
+            var minutosEspera = (DateTime.Now - (DateTime)item.HoraPedido).TotalMinutes;
+            var colorBadge = minutosEspera > 15 ? "bg-danger" : "bg-dark";
+
             <div class="col">
                 <div class="card h-100 border-warning shadow">
-                    <div class="card-header bg-warning text-dark d-flex justify-content-between">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
                         <span class="fw-bold">MESA #@item.Mesa</span>
-                        <span>Hace 2 mins</span>
+                        <span class="badge @colorBadge shadow-sm" style="font-size: 0.9rem;">
+                            <i class="bi bi-clock"></i> @item.HoraPedido.ToString("HH:mm")
+                        </span>
                     </div>
-                    <div class="card-body">
-                        <h4 class="card-title">@item.Cantidad x @item.Producto</h4>
+                    <div class="card-body text-center py-4">
+                        <h2 class="display-6 fw-bold mb-0">@item.Cantidad x @item.Producto</h2>
+                        @if (minutosEspera > 10)
+                        {
+                            <small class="text-danger fw-bold text-uppercase mt-2 d-block">
+                                <i class="bi bi-exclamation-triangle"></i> ¡Demorado! (@Math.Floor(minutosEspera) min)
+                            </small>
+                        }
                     </div>
                     <div class="card-footer p-0">
-                        <button class="btn btn-success w-100 btn-lg rounded-0" 
+                        <button class="btn btn-success w-100 btn-lg rounded-0 py-3" 
                                 onclick="marcarListo(@item.IdDetalle)">
-                            <i class="bi bi-check-lg"></i> ¡LISTO!
+                            <i class="bi bi-check-lg"></i> ¡LISTO PARA SERVIR!
                         </button>
                     </div>
                 </div>
@@ -45,16 +68,17 @@
     </div>
 </div>
 
-
-
 @section Scripts {
     <script>
-        // Recargar la página cada 10 segundos para ver pedidos nuevos
+        // Recargar cada 10 segundos
         setTimeout(function() {
             location.reload();
         }, 10000);
 
         function marcarListo(id) {
+            // Deshabilitar el botón para evitar clics dobles
+            event.target.disabled = true;
+
             fetch('@Url.Action("MarcarListo", "Cocina")', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -62,7 +86,6 @@
             }).then(() => location.reload());
         }
 
-        // Reloj en tiempo real
         setInterval(() => {
             document.getElementById('reloj').innerText = new Date().toLocaleTimeString();
         }, 1000);
