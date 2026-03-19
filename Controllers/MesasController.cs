@@ -3,6 +3,7 @@ using System.Data;
 using RestauranteApp.Models;
 using System.Collections.Generic;
 using System;
+using Microsoft.Data.SqlClient;
 
 namespace RestauranteApp.Controllers
 {

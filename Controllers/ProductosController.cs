@@ -4,6 +4,7 @@ using RestauranteApp.Models;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http; // Necesario para Session
+using Microsoft.Data.SqlClient;
 
 namespace RestauranteApp.Controllers
 {
@@ -65,7 +66,7 @@ namespace RestauranteApp.Controllers
             var rol = HttpContext.Session.GetString("Rol");
             if (rol != "CAJA") return RedirectToAction("Index", "Login");
 
-            Producto producto = null;
+            Producto? producto = null;
 
             if (_db.State == ConnectionState.Closed) _db.Open();
             using (var cmd = _db.CreateCommand())

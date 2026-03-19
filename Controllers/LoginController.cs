@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using RestauranteApp.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient; // Asegúrate de tener este usando
 
 namespace RestauranteApp.Controllers
 {
@@ -14,14 +15,9 @@ namespace RestauranteApp.Controllers
             _db = db;
         }
 
-        // GET: /Login
         [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
 
-        // POST: /Login
         [HttpPost]
         public IActionResult Index(string usuario, string password)
         {
@@ -33,40 +29,47 @@ namespace RestauranteApp.Controllers
 
             Usuario? user = null;
 
+            // CAMBIO: En SQL Server se usa "SELECT TOP 1" en lugar de "LIMIT 1"
             string sql = @"
-                SELECT *
+                SELECT TOP 1 *
                 FROM Usuario
                 WHERE NombreUsuario = @usuario
-                  AND Activo = 1
-                LIMIT 1;
+                  AND Activo = 1;
             ";
 
-            using (var cmd = _db.CreateCommand())
+            try 
             {
-                cmd.CommandText = sql;
-
-                var pUsuario = cmd.CreateParameter();
-                pUsuario.ParameterName = "@usuario";
-                pUsuario.Value = usuario;
-                cmd.Parameters.Add(pUsuario);
-
-                _db.Open();
-                using (var reader = cmd.ExecuteReader())
+                using (var cmd = _db.CreateCommand())
                 {
-                    if (reader.Read())
+                    cmd.CommandText = sql;
+
+                    var pUsuario = cmd.CreateParameter();
+                    pUsuario.ParameterName = "@usuario";
+                    pUsuario.Value = usuario;
+                    cmd.Parameters.Add(pUsuario);
+
+                    if (_db.State == ConnectionState.Closed) _db.Open();
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        user = new Usuario
+                        if (reader.Read())
                         {
-                            IdUsuario = Convert.ToInt32(reader["IdUsuario"]),
-                            NombreUsuario = reader["NombreUsuario"].ToString()!,
-                            NombreCompleto = reader["NombreCompleto"].ToString()!,
-                            PasswordHash = reader["PasswordHash"].ToString()!,
-                            Rol = reader["Rol"].ToString()!,
-                            Activo = Convert.ToBoolean(reader["Activo"])
-                        };
+                            user = new Usuario
+                            {
+                                IdUsuario = Convert.ToInt32(reader["IdUsuario"]),
+                                NombreUsuario = reader["NombreUsuario"].ToString()!,
+                                NombreCompleto = reader["NombreCompleto"].ToString()!,
+                                PasswordHash = reader["PasswordHash"].ToString()!,
+                                Rol = reader["Rol"].ToString()!,
+                                Activo = Convert.ToBoolean(reader["Activo"])
+                            };
+                        }
                     }
                 }
-                _db.Close();
+            }
+            finally 
+            {
+                _db.Close(); // Nos aseguramos de cerrar la conexión siempre
             }
 
             if (user == null || user.PasswordHash != password)
@@ -76,18 +79,18 @@ namespace RestauranteApp.Controllers
             }
 
             // 🔐 Sesión
-            HttpContext.Session.SetString("IdUsuario", user.IdUsuario.ToString()); // <-- AGREGA ESTA LÍNEA
+            HttpContext.Session.SetString("IdUsuario", user.IdUsuario.ToString());
             HttpContext.Session.SetString("Usuario", user.NombreUsuario);
             HttpContext.Session.SetString("NombreCompleto", user.NombreCompleto);
             HttpContext.Session.SetString("Rol", user.Rol);
 
-            // 🚦 Redirección por rol - va a la pagina segun su rol --------------
+            // 🚦 Redirección por rol
             return user.Rol switch
             {
                 "MOZO" => RedirectToAction("Index", "Mesas"),
                 "COCINA" => RedirectToAction("Index", "Cocina"),
-                "CAJA" => RedirectToAction("Index", "Caja"),
-                _ => RedirectToAction("Index", "Home")
+                "CAJA" => RedirectToAction("Index", "Home"),
+                _ => RedirectToAction("Index", "Home") // Agregado por seguridad
             };
         }
 

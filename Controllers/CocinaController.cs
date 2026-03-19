@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using RestauranteApp.Models;
 using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
 
 namespace RestauranteApp.Controllers
 {
