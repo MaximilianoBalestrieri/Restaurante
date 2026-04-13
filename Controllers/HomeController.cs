@@ -16,6 +16,11 @@ namespace RestauranteApp.Controllers
             _db = db;
         }
 
+        public IActionResult Inicio()
+    {
+        return View();
+    }
+
         public IActionResult Index()
         {
             var idUsuarioStr = HttpContext.Session.GetString("IdUsuario");

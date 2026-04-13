@@ -5,14 +5,76 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/login.css" />
+    <style>
+        /* Contenedor principal de los botones */
+        .actions-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            width: 100%;
+        }
+
+        /* Normalización total para que ambos sean idénticos */
+        .btn-ingresar, .btn-cancelar {
+            flex: 1;
+            /* Forzamos la misma altura para ambos */
+            height: 48px; 
+            
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            
+            /* Usamos flex interno para centrar el texto vertical y horizontalmente */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            /* Quitamos cualquier padding que el navegador ponga por defecto */
+            padding: 0; 
+            box-sizing: border-box;
+        }
+
+        /* Botón Ingresar: Verde con letra blanca */
+        .btn-ingresar {
+            background-color: #28a745;
+        }
+
+        .btn-ingresar:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Botón Cancelar: Rojo con letra blanca */
+        .btn-cancelar {
+            background-color: #dc3545;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Reset para evitar conflictos con estilos previos del layout */
+        form button[type="submit"] {
+            width: 100% !important; /* El contenedor padre controlará el ancho real */
+            margin: 0;
+        }
+    </style>
 }
 
 <div class="login-container">
     <div class="login-card">
 
         <div class="login-image">
-            <img src="~/imagenes/inicio.png"
-                 alt="Imagen de inicio de sesión" />
+            <img src="~/imagenes/inicio.png" alt="Imagen de inicio de sesión" />
         </div>
 
         <div class="login-divider"></div>
@@ -23,14 +85,12 @@
 
             @if (ViewBag.Error != null)
             {
-                <div class="alert">
+                <div class="alert alert-danger">
                     @ViewBag.Error
                 </div>
             }
 
-            <form asp-controller="Login"
-                  asp-action="Index"
-                  method="post">
+            <form asp-controller="Login" asp-action="Index" method="post">
 
                 <div class="form-group">
                     <label for="usuario">Usuario</label>
@@ -39,7 +99,6 @@
                            id="usuario"
                            class="form-control"
                            placeholder="Tu usuario"
-                           autocomplete="username"
                            required />
                 </div>
 
@@ -50,13 +109,18 @@
                            id="password"
                            class="form-control"
                            placeholder="Tu password"
-                           autocomplete="current-password"
                            required />
                 </div>
 
-                <button type="submit">
-                    Ingresar
-                </button>
+                <div class="actions-group">
+                    <button type="submit" class="btn-ingresar">
+                        Ingresar
+                    </button>
+
+                    <a href="@Url.Action("Inicio", "Home")" class="btn-cancelar">
+                        Cancelar
+                    </a>
+                </div>
 
             </form>
         </div>

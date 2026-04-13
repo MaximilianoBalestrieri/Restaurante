@@ -1,0 +1,304 @@
+@{
+    ViewData["Title"] = "Bienvenido - Fuego Sagrado";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+:root {
+        --primary: #bc2e22;
+        --dark: #121212;
+        --gold: #d4a373;
+        --white: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--dark);
+        color: var(--white);
+        scroll-behavior: smooth;
+    }
+
+    /* --- NAVEGACIÓN (Corregida para el margen derecho) --- */
+    .header-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        /* justify-content: space-between asegura que el primer hijo vaya a la izq y el último a la der */
+        justify-content: space-between; 
+        align-items: center;
+        padding: 30px 50px;
+        z-index: 1000;
+    }
+
+    .logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        color: var(--gold);
+        font-weight: bold;
+        text-decoration: none;
+        letter-spacing: 2px;
+    }
+
+    .btn-login {
+        border: 2px solid var(--gold);
+        color: var(--gold);
+        padding: 12px 28px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        /* Por si acaso no hay logo, esto lo empuja a la derecha solo */
+        margin-left: auto; 
+    }
+
+    .btn-login:hover {
+        background-color: var(--gold);
+        color: var(--dark);
+    }
+
+    /* --- HERO SECTION (Texto debajo del título) --- */
+    .hero {
+        height: 100vh;
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                    url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column; /* Apila elementos verticalmente */
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(3.5rem, 12vw, 7rem);
+        line-height: 1.1;
+        margin-bottom: 15px; /* Espacio para el texto de abajo */
+    }
+    .hero h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2.5rem, 10vw, 5rem);
+        line-height: 1.1;
+        color: var(--gold);
+        margin-bottom: 15px; /* Espacio para el texto de abajo */
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        color: #ddd;
+        margin-bottom: 30px;
+        font-weight: 300;
+    }
+
+    .btn-cta {
+        padding: 15px 40px;
+        background-color: var(--primary);
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: 0.3s;
+    }
+
+    .btn-cta:hover {
+        background-color: #a0261b;
+        transform: translateY(-3px);
+    }
+    /* --- SECCIONES INFERIORES --- */
+    .features {
+        padding: 100px 10%;
+        background-color: #1a1a1a;
+    }
+
+    .section-title {
+        text-align: center;
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        margin-bottom: 60px;
+        color: var(--gold);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+    }
+
+    .card {
+        background: #222;
+        padding: 40px;
+        border-radius: 15px;
+        border-bottom: 4px solid transparent;
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        border-bottom: 4px solid var(--primary);
+        transform: translateY(-10px);
+    }
+
+    .card h3 {
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        color: var(--white);
+    }
+
+    .card p {
+        color: #aaa;
+        line-height: 1.6;
+    }
+
+  /* Galería */
+ /* Galería */
+ .gallery {
+     padding: 60px 10%;
+ }
+
+ .gallery-grid {
+     display: grid;
+     /* Forzamos las 2 columnas que pediste */
+     grid-template-columns: repeat(2, 1fr); 
+     gap: 30px; /* Espacio elegante entre fotos */
+ }
+
+ .gallery-item {
+     /* AQUÍ CONTROLAMOS EL TAMAÑO */
+     width: 100%; 
+     height: 350px; /* Alto fijo para que todas las cajas sean iguales */
+     
+     overflow: hidden;
+     border-radius: 15px;
+     background-color: #222;
+     box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+ }
+
+ .gallery-item img {
+     width: 100%;
+     height: 100%;
+     /* object-fit: cover es fundamental aquí: 
+        hace que la imagen llene el 100% del ancho y alto (350px) 
+        SIN estirarse, aunque recorte un poquito los bordes sobrantes. */
+     object-fit: cover; 
+     
+     /* Esto asegura que lo que veamos sea el centro de la comida/lugar */
+     object-position: center; 
+     
+     transition: transform 0.5s ease;
+     filter: grayscale(20%);
+ }
+
+ .gallery-item:hover img {
+     transform: scale(1.1);
+     filter: grayscale(0%);
+ }
+
+ /* Responsive para celulares */
+ @@media (max-width: 768px) {
+     .gallery-grid {
+         grid-template-columns: 1fr; /* En celular una debajo de otra */
+     }
+     .gallery-item {
+         height: 250px; /* Un poco más bajas en el celular para que no ocupen toda la pantalla */
+     }
+ }
+
+    footer {
+        padding: 40px;
+        text-align: center;
+        background: #000;
+        color: #777;
+        font-size: 0.9rem;
+    }
+</style>
+</head>
+<body>
+<header class="header-nav">
+        <a href="#" class="logo">CARBÓN SAGRADO</a>
+        
+        <a href="@Url.Action("Index", "Home")" 
+           class="btn-login" 
+           title="Solo usuarios">
+           Login Usuarios
+        </a>
+    </header>
+    <section class="hero">
+        <h2>Restaurant Parrilla </h2>
+        <h1>CARBÓN SAGRADO</h1>
+        <p>No es solo una cena, es un ritual. Disfruta de la mejor selección de cortes argentinos en un ambiente diseñado para los sentidos.</p>
+        @* <a href="#experiencia" class="btn-cta">Vivir la Experiencia</a> *@
+    </section>
+
+    <section id="experiencia" class="features">
+        <h2 class="section-title">¿Por qué elegir nuestra mesa?</h2>
+        <div class="features-grid">
+            <div class="card">
+                <h3>Cortes de Autor</h3>
+                <p>Nuestra carne proviene de ganado seleccionado y es madurada por 21 días para lograr una textura sedosa y un sabor profundo.</p>
+            </div>
+            <div class="card">
+                <h3>Vinos de Altura</h3>
+                <p>Contamos con una cava privada con más de 50 etiquetas de las mejores bodegas del país, curada para el maridaje perfecto.</p>
+            </div>
+            <div class="card">
+                <h3>Fuego de Leña</h3>
+                <p>No usamos carbón comercial. Solo quebracho y espinillo, aportando ese aroma ahumado que solo la verdadera tradición puede dar.</p>
+            </div>
+             <div class="card">
+                <h3>Ambiente Cálido</h3>
+                <p>Queremos que en Carbón Sagrado te sientas como en casa, rodeado de la calidez de nuestro fuego y la hospitalidad que nos define.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery">
+        <h2 class="section-title">Nuestra Casa</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="/imagenes/parrilla1.jpeg" alt="Parrilla"></div>
+            <div class="gallery-item"><img src="/imagenes/parrilla2.jpeg" alt="Parrilla"></div>
+            <div class="gallery-item"><img src="/imagenes/parrilla3.jpeg" alt="Parrilla"></div>
+            <div class="gallery-item"><img src="/imagenes/parrilla4.jpeg" alt="Parrilla"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Carbón Sagrado - Proyecto Ramsecode</p>
+    </footer>
+
+    <script>
+        // Animación simple al hacer scroll
+        window.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const cardTop = card.getBoundingClientRect().top;
+                if(cardTop < window.innerHeight - 100) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        // Inicialización de estilos para animación
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease-out';
+        });
+    </script>
+</body>
+</html>
