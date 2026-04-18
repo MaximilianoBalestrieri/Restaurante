@@ -280,6 +280,14 @@ namespace RestauranteApp.Controllers
     return View(cierre);
 }
 
+public IActionResult Logout()
+{
+    // Limpia todas las variables (IdUsuario, Rol, Nombre)
+    HttpContext.Session.Clear(); 
+    
+    // Redirige a la página de presentación del restaurante
+    return RedirectToAction("Inicio");
+}
 
     }
 }
